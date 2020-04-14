@@ -144,8 +144,7 @@ if found then
 	-- TODO
 	-- Ive noticed a bug where amazon fails to check me out and directs me back to delivery slot page
 	-- do not panic, just initiate check out again, your delivery slot should still be reserved for Fresh at least, Whole Foods seems to drop it, this may be due to contention 
-	-- repeat 3 
-	repeat 1 times
+	repeat 3 times
 		if autoCheckout then
 			clickContinue(mytab)
 		end if
