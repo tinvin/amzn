@@ -19,7 +19,7 @@ to js(code, mytab)
 	
 end js
 
-
+set delayTime to 20
 set autoCheckout to false
 -- variable definitions
 set found to false
@@ -27,13 +27,15 @@ set reload to true
 set cartUrl to "https://www.amazon.com/gp/cart/view.html"
 set navigate to false
 set autoCheckout to false
+set counter to 0
+set progressInterval to 100
 
 display dialog "Auto checkout?" buttons {"Yes", "No"} default button "Yes"
 if result = {button returned:"Yes"} then
 	set autoCheckout to true -- redundant, but included for clarity
 end if
 
-log autoCheckout
+log "Auto checkout: " & autoCheckout
 -- save tab
 tell application "Safari"
 	set mywin to (front window)
@@ -79,20 +81,18 @@ repeat while found is false
 	
 	-- Amazon Fresh
 	if siteText contains "Reserve your time" then
-		
 		-- cycle through tabs and delivery window buttons
 		-- click/select delivery window button and click continue in each iteration
 		-- try to alert based on disabled class name in delivery button span
-		-- Removed: tabs and window buttons are completely separate, click tabs anyway in case that influences activation, this is probably not needed
-		
+		-- Removed: tabs and window buttons are completely separate, click tabs anyway in case that influences activation, this is probably not needed		
 		repeat with j from 0 to 20
 			-- check if radio button is disabled
 			set radioDisabled to js("document.getElementsByClassName('a-box spanOutsideSlotButton')[" & j & "].querySelector('input').disabled", mytab)
 			try
 				if not radioDisabled then
 					-- not disabled, means we got one baby
-					-- click the radio, the continue
-					js("document.getElementsByClassName('a-box spanOutsideSlotButton')[" & j & "].querySelector('input').click()", mytab)
+					-- click the radio, then continue
+					clickClassName("a-box spanOutsideSlotButton", 0, mytab)
 					set found to true
 					exit repeat
 				end if
@@ -123,14 +123,18 @@ repeat while found is false
 		return
 	else
 		log siteText
-		display notification "Wrong page: renavigating" with title "Amazon"
+		display notification "Wrong page: renavigating to " & cartUrl with title "Amazon"
 		set navigate to true
 	end if
 	
 	-- rate limit for subsequent attempts
 	if not found then
-		delay 10
+		delay delayTime
 	end if
+	if counter mod progressInterval = 1 then
+		display notification "Nothing yet: still searching. Count " & counter with title "Amazon"
+	end if
+	set counter to counter + 1
 	
 end repeat
 
