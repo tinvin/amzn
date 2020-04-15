@@ -3,6 +3,7 @@
 - open a safari window/tab
 - navigate to amazon fresh or whole foods checkout page, where slots are to be chosen. 
 - open script in applescript editor and run
+- don't change tab ordering (delete or prepend) on this window, applescript uses tab index for keeping track of amazon tab
 
 
 Script progress can be viewed in AppleScript Editor console view (little page icon at the bottom "Show or hide the console). Replies view is especially verbose, Messages view shows less verbose output. 
